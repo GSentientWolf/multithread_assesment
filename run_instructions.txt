@@ -1,0 +1,23 @@
+# install packages
+pipenv install -r requirements.txt
+
+# Enter the virtual environment
+pipenv shell
+
+# Execute the following command inside the virtual environment:
+(env)> python -m main
+
+It should execute a setting up sequence for the threading objects
+and then execute for 40 s.
+
+There should be a file named "file_repo.txt" in the same directory
+as main.py. The file contains all the different sensors readouts.
+
+Notes:
+======
+All sensors have different execution intervals.
+All sensors are created via a Factory function.
+The threading is synchronized using the logger class.
+The network is a thread safe Queue.
+Save to file works fine.
+Save to a relational DB is still incomplete. Don't use it yet.
