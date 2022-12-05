@@ -21,7 +21,7 @@ and use factory pattern to create multiple types sensors with varying delay time
 - Repository: create an implementation that allows to change datasource options before running.
 - Use type hinting.
 
-![Diagram solution](multithread_assesment.png)
+![Diagram solution](multithread_assesment.jpg)
 
 Modify classes or create new ones as you find needed, also you are free to use whatever library you want.
 Don't forget to include the requirements file.
