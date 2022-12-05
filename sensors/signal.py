@@ -12,7 +12,9 @@ MINOR_VARIANCE = 0.6
 
 
 class Signal:
-    ''' Main class for a synthetic signal (a Gaussian process) '''
+    """
+    Main class for a synthetic signal (a Gaussian process)
+    """
     def __init__(self, initial_value: str) -> None:
         self.current_value = None
         self.value = initial_value

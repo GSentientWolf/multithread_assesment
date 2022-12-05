@@ -64,3 +64,9 @@ class RepositoryMessage:
 
     def __str__(self):
         return str(self.__dict__)
+
+
+if __name__ == "__main__":
+
+    data = DeviceMessage(None, None)
+    print(data)

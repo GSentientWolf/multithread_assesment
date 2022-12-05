@@ -127,6 +127,3 @@ class MyLogger:
         """
         for sensor in self:
             sensor.stop_sensor()
-
-
-#if __name__ == '__main__':

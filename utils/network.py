@@ -30,9 +30,9 @@ class Network(threading.Thread):
         super().__init__(name='Network', target=self.run,
                          daemon=True)
         self.lock = threading.Lock()
-        self.message_queue = Queue(maxsize=2*N_MESSAGES)
+        self.message_queue = Queue(maxsize=3*N_MESSAGES)
         self.devices = dict()
-        self.notify_repo:w = None
+        self.notify_repo = None
         self.start_running = threading.Event()
 
     def start_network(self) -> None:
@@ -63,7 +63,8 @@ class Network(threading.Thread):
         :return: None
         """
         with self.lock:
-            self.message_queue.put(message, block=True, timeout=DEFAULT_WAIT)
+            print("Inserting message into the queue")
+            self.message_queue.put_nowait(message)
 
     def get(self) -> List[str]:
         """
@@ -71,8 +72,13 @@ class Network(threading.Thread):
         in groups of N_MESSAGES
         :return:
         """
-        with self.lock:
-            return [self.message_queue.get() for _ in range(N_MESSAGES)]
+        result = []
+        # with self.lock:
+        print("Storing messages into repository")
+        for _ in range(self.message_queue.qsize()):
+            item = self.message_queue.get_nowait()
+            result.append(item)
+        return result
 
     def connect_device(self) -> Callable:
         """
@@ -98,5 +104,4 @@ class Network(threading.Thread):
         while self.start_running.is_set():
             time.sleep(NETWORK_INTERVAL)
             with self.lock:
-                if self.message_queue.qsize() >= N_MESSAGES:
-                    self.notify_repository()
+                self.notify_repository()

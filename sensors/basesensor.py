@@ -28,7 +28,7 @@ N_MAX_SENSORS = 5
 class BaseSensor(threading.Thread):
     """ Base class for any sensor type"""
 
-    def __init__(self, *, name: str, network: Network,
+    def __init__(self, *, name: str, net: Network,
                  interval: float = BASE_INTERVAL):
         """ Initialize with required named parameters """
         super().__init__(name=name, daemon=True, target=self.run)
@@ -36,7 +36,7 @@ class BaseSensor(threading.Thread):
         self.interval = interval
         self.signal = Signal(name)
         self.value = None
-        self.connection_point = network.connect_device()
+        self.connection_point = net.connect_device()
         self.lock = threading.Lock()
         self.start_running = threading.Event()
 
@@ -63,7 +63,7 @@ class BaseSensor(threading.Thread):
         out = self._build_sensor_message()
         out = {'readout': out}
         msg_content = json.dumps(out)
-        return DeviceMessage(str(DeviceMessageEnum.DEVICE_READOUT.value),
+        return DeviceMessage(str(DeviceMessageEnum['DEVICE_READOUT'].value),
                              msg_content)
 
     def get_readout(self) -> DeviceMessage:
@@ -79,13 +79,13 @@ class BaseSensor(threading.Thread):
         """ Stores de callback function when the sensor is registered """
         self._readout_callback_fn = fn
 
-    def send_readout(self) -> None:
+    def send_readout(self, readout: DeviceMessage) -> None:
         """
         Sends sensor readout to the logger module via the provided callback
         function
         """
         # The read property readout
-        self.connection_point(self.readout)
+        self.connection_point(readout)
 
     def start_sensor(self) -> None:
         if not self.is_alive():
@@ -117,7 +117,9 @@ class BaseSensor(threading.Thread):
         while self.start_running.is_set():
             time.sleep(timer)
             with self.lock:
-                print(self.get_readout())
+                readout = self.get_readout()
+                self.send_readout(readout)
+                print(readout)
 
 
 class SensorBank:
